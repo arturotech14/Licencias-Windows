@@ -299,7 +299,7 @@
         <span class="material-symbols-outlined text-2xl" style='font-variation-settings: "FILL" 1;'>chat</span>
         <span class="text-[9px] md:text-[11px] font-bold uppercase tracking-wider">WhatsApp</span>
       </a>
-      <button class="flex flex-col items-center justify-center gap-1 py-3 md:py-4 rounded-2xl glass text-white transition-all glass-hover" onclick="toggleHelpModal()">
+      <button class="flex flex-col items-center justify-center gap-1 py-3 md:py-4 rounded-2xl glass text-white transition-all glass-hover" onclick="document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })">
         <span class="material-symbols-outlined text-2xl">help_outline</span>
         <span class="text-[9px] md:text-[11px] font-bold uppercase tracking-wider">Ayuda</span>
       </button>
@@ -307,29 +307,6 @@
         <span class="material-symbols-outlined text-2xl">key</span>
         <span class="text-[9px] md:text-[11px] font-bold uppercase tracking-wider">Licencias</span>
       </button>
-    </div>
-  </div>
-
-  <!-- Help Modal -->
-  <div class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-background/80 backdrop-blur-md" id="help-modal">
-    <div class="liquid-glass-highlight w-full max-w-sm rounded-[2rem] p-8 space-y-6 animate-fade-in">
-      <div class="flex justify-between items-center">
-        <h3 class="text-xl font-bold text-white">Centro de Ayuda</h3>
-        <button class="text-white/40" onclick="toggleHelpModal()">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      <div class="space-y-4 text-left">
-        <div class="space-y-1">
-          <h4 class="text-blue-400 font-bold text-[10px] uppercase tracking-wider">¿Cómo recibo mi clave?</h4>
-          <p class="text-white/70 text-xs">Vía email de forma instantánea tras el pago.</p>
-        </div>
-        <div class="space-y-1">
-          <h4 class="text-blue-400 font-bold text-[10px] uppercase tracking-wider">¿Es activación permanente?</h4>
-          <p class="text-white/70 text-xs">Sí, de por vida para el equipo donde se active.</p>
-        </div>
-      </div>
-      <button class="w-full bg-white/10 text-white font-bold py-3 rounded-xl border border-white/10" onclick="toggleHelpModal()">Entendido</button>
     </div>
   </div>
 
