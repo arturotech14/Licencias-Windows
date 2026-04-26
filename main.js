@@ -1,10 +1,10 @@
 const state = { os: 'win11', edition: 'pro' };
 
 const config = {
-  'win11-pro':  { price: '€19.99', desc: 'Productividad avanzada y seguridad empresarial para Windows 11.' },
-  'win11-home': { price: '€14.99', desc: 'Perfecto para el uso diario y gaming en casa con Windows 11.' },
-  'win10-pro':  { price: '€17.99', desc: 'La mejor opción para profesionales y empresas en Windows 10.' },
-  'win10-home': { price: '€12.99', desc: 'Activación completa para uso doméstico en Windows 10.' }
+  'win11-pro':  { price: 'USD 11.50', desc: 'Productividad avanzada y seguridad empresarial para Windows 11.' },
+  'win11-home': { price: 'USD 11.00', desc: 'Perfecto para el uso diario y gaming en casa con Windows 11.' },
+  'win10-pro':  { price: 'USD 10.50', desc: 'La mejor opción para profesionales y empresas en Windows 10.' },
+  'win10-home': { price: 'USD 10.00', desc: 'Activación completa para uso doméstico en Windows 10.' }
 };
 
 function selectOS(os) {
