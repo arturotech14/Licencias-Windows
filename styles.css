@@ -1,0 +1,94 @@
+body {
+  background-image: linear-gradient(rgba(2, 8, 23, 0.8), rgba(2, 8, 23, 0.8)),
+    url(https://lh3.googleusercontent.com/aida-public/AB6AXuCjvmWb50ns9oT8jKqP7eX_Hhc3pX5Wm6j8v7w8GKm9iD4hdhO-dTea8QWurPic23U50X3EM_VG888l5ZKxLxlXhim31Vkh06kNFJKoKWu95cpUOrEtucJAYG7aQsxHVRXt6ECE_e-eAO4gkrqHL7d0NwkiCcLBeVSTISyY9LqT2jTvnePTyj2lSIHDZWh2XSkINVyMokOwUKfO8DA9pPVjTEnei32Sc6N9rwccax2u5dhTPdcfMqLPdSF_jLdQ6srC9pPZ4YdsqFE);
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+.glass {
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-hover:hover {
+  background: rgba(51, 65, 85, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.liquid-glass-highlight {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(25px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.selection-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(0, 0, 0, 0.4) 100%);
+  backdrop-filter: blur(40px);
+  border-radius: 2.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.tab-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tab-active-os {
+  background: rgba(100, 140, 200, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  color: white;
+}
+
+.tab-active-edition {
+  background: rgba(30, 70, 140, 0.9);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  color: white;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.whatsapp-float {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#side-navbar {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateX(-100%);
+}
+
+#side-navbar.open {
+  transform: translateX(0);
+}
