@@ -92,3 +92,42 @@ body {
 #side-navbar.open {
   transform: translateX(0);
 }
+
+/* ===== MODAL DE PAGO ===== */
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.payment-sheet {
+  animation: slideUp 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@media (min-width: 640px) {
+  .payment-sheet {
+    animation: fadeInScale 0.2s ease-out forwards;
+  }
+}
+
+.payment-safe-area {
+  height: env(safe-area-inset-bottom, 0px);
+  min-height: 8px;
+}

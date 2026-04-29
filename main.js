@@ -86,3 +86,26 @@ function scrollToContact() {
 }
 
 window.onload = updateUI;
+
+// ===== MODAL DE PAGO =====
+
+function openPaymentModal() {
+  var data = config[state.os + '-' + state.edition];
+  var osName      = state.os      === 'win11' ? 'Windows 11' : 'Windows 10';
+  var editionName = state.edition === 'pro'   ? 'Pro'        : 'Home';
+
+  document.getElementById('modal-product-name').innerText  = osName + ' ' + editionName;
+  document.getElementById('modal-product-price').innerText = data.price;
+
+  document.getElementById('payment-modal').classList.remove('hidden');
+}
+
+function closePaymentModal() {
+  document.getElementById('payment-modal').classList.add('hidden');
+}
+
+function handleBackdropClick(event) {
+  if (event.target === document.getElementById('payment-modal')) {
+    closePaymentModal();
+  }
+}

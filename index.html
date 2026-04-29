@@ -2,7 +2,7 @@
 <html class="dark" lang="es">
 <head>
   <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
   <title>WinKeyAR Premium Keys</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
@@ -122,11 +122,11 @@
         <div class="space-y-2">
           <button class="w-full text-left p-4 rounded-2xl glass-hover glass flex items-center justify-between group" onclick="quickSelect('win11', 'pro')">
             <span class="text-white font-medium">11 Pro</span>
-            <span class="text-blue-300 font-bold">€19.99</span>
+            <span class="text-blue-300 font-bold">USD 11.50</span>
           </button>
           <button class="w-full text-left p-4 rounded-2xl glass-hover glass flex items-center justify-between group" onclick="quickSelect('win11', 'home')">
             <span class="text-white font-medium">11 Home</span>
-            <span class="text-blue-300 font-bold">€14.99</span>
+            <span class="text-blue-300 font-bold">USD 11.00</span>
           </button>
         </div>
       </div>
@@ -135,11 +135,11 @@
         <div class="space-y-2">
           <button class="w-full text-left p-4 rounded-2xl glass-hover glass flex items-center justify-between group" onclick="quickSelect('win10', 'pro')">
             <span class="text-white font-medium">10 Pro</span>
-            <span class="text-blue-300 font-bold">€17.99</span>
+            <span class="text-blue-300 font-bold">USD 10.50</span>
           </button>
           <button class="w-full text-left p-4 rounded-2xl glass-hover glass flex items-center justify-between group" onclick="quickSelect('win10', 'home')">
             <span class="text-white font-medium">10 Home</span>
-            <span class="text-blue-300 font-bold">€12.99</span>
+            <span class="text-blue-300 font-bold">USD 10.00</span>
           </button>
         </div>
       </div>
@@ -207,10 +207,10 @@
         <!-- Price and Info Display -->
         <div class="space-y-3 md:space-y-4 text-left">
           <div class="transition-all duration-300" id="info-content">
-            <div class="text-blue-400 font-display text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-[0_4px_12px_rgba(59,130,246,0.3)]" id="selected-price">€19.99</div>
+            <div class="text-blue-400 font-display text-4xl md:text-5xl font-extrabold tracking-tight drop-shadow-[0_4px_12px_rgba(59,130,246,0.3)]" id="selected-price">USD 11.50</div>
             <p class="text-white/90 font-medium text-xs md:text-sm mt-2 leading-relaxed" id="selected-desc">Productividad avanzada y seguridad empresarial para Windows 11.</p>
           </div>
-          <button class="bg-primary-container text-white w-full py-3 md:py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-base mt-2">
+          <button onclick="openPaymentModal()" class="bg-primary-container text-white w-full py-3 md:py-4 rounded-2xl font-bold shadow-lg hover:shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-base mt-2">
             <span class="material-symbols-outlined text-xl" style='font-variation-settings: "FILL" 1;'>shopping_cart</span>
             <span id="buy-btn-text">Comprar Pro</span>
           </button>
@@ -332,6 +332,81 @@
       <button class="w-full bg-white/10 text-white font-bold py-3 rounded-xl border border-white/10" onclick="toggleHelpModal()">Entendido</button>
     </div>
   </div>
+
+  <!-- ==================== MODAL DE PAGO ==================== -->
+  <div
+    class="hidden fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-background/80 backdrop-blur-md"
+    id="payment-modal"
+    onclick="handleBackdropClick(event)"
+  >
+    <div class="payment-sheet liquid-glass-highlight w-full sm:max-w-sm rounded-t-[2.5rem] sm:rounded-[2rem] p-5 sm:p-6 space-y-4" id="payment-modal-inner">
+
+      <!-- Pastilla decorativa — solo celular -->
+      <div class="w-10 h-1 bg-white/20 rounded-full mx-auto sm:hidden"></div>
+
+      <!-- Encabezado con nombre y precio dinámico -->
+      <div class="text-center pb-4 border-b border-white/10 space-y-1">
+        <p class="text-[10px] font-bold uppercase tracking-widest text-blue-400">Confirmando compra</p>
+        <p class="text-white font-bold text-base leading-snug" id="modal-product-name">Windows 11 Pro</p>
+        <p class="text-blue-400 font-extrabold text-4xl tracking-tight drop-shadow-[0_4px_12px_rgba(59,130,246,0.3)]" id="modal-product-price">USD 11.50</p>
+      </div>
+
+      <p class="text-white/50 text-[11px] text-center">¿Cómo querés pagar?</p>
+
+      <!-- Opción 1: Tarjeta -->
+      <a
+        href="https://TU-LINK-DE-PAGO.com"
+        target="_blank"
+        class="block p-4 rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-600/20 to-blue-900/20 hover:from-blue-600/30 hover:border-blue-400/50 active:scale-[0.98] transition-all"
+      >
+        <div class="flex items-center gap-3 mb-3">
+          <div class="bg-blue-500/20 p-2 rounded-xl border border-blue-400/20 shrink-0">
+            <span class="material-symbols-outlined text-blue-400 text-xl" style='font-variation-settings: "FILL" 1;'>credit_card</span>
+          </div>
+          <div>
+            <p class="text-white font-bold text-sm leading-tight">Tarjeta de Crédito / Débito</p>
+            <p class="text-white/40 text-[10px] mt-0.5">Visa, Mastercard, American Express</p>
+          </div>
+        </div>
+        <div class="bg-blue-500 text-white text-center text-sm font-bold py-3 rounded-xl">
+          Pagar con Tarjeta →
+        </div>
+      </a>
+
+      <!-- Opción 2: WhatsApp -->
+      <a
+        href="https://wa.me/TUNUMERO?text=Hola%2C%20quiero%20consultar%20otro%20medio%20de%20pago"
+        target="_blank"
+        class="block p-4 rounded-2xl border border-[#25D366]/30 bg-gradient-to-br from-[#25D366]/10 to-[#128C7E]/10 hover:from-[#25D366]/20 hover:border-[#25D366]/50 active:scale-[0.98] transition-all"
+      >
+        <div class="flex items-center gap-3 mb-3">
+          <div class="bg-[#25D366]/20 p-2 rounded-xl border border-[#25D366]/20 shrink-0">
+            <span class="material-symbols-outlined text-[#25D366] text-xl" style='font-variation-settings: "FILL" 1;'>chat</span>
+          </div>
+          <div>
+            <p class="text-white font-bold text-sm leading-tight">Otro Medio de Pago</p>
+            <p class="text-white/40 text-[10px] mt-0.5">Transferencia, efectivo y más</p>
+          </div>
+        </div>
+        <div class="bg-[#25D366] text-white text-center text-sm font-bold py-3 rounded-xl">
+          Consultar por WhatsApp →
+        </div>
+      </a>
+
+      <!-- Cancelar -->
+      <button
+        onclick="closePaymentModal()"
+        class="w-full text-white/30 text-xs py-2 hover:text-white/60 transition-colors min-h-[40px]"
+      >
+        Cancelar
+      </button>
+
+      <!-- Espacio de seguridad para el indicador de inicio del iPhone -->
+      <div class="payment-safe-area sm:hidden"></div>
+
+    </div>
+  </div>
+  <!-- ==================== FIN MODAL DE PAGO ==================== -->
 
   <script src="main.js"></script>
 </body>
