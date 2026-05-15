@@ -112,9 +112,19 @@ function openPaymentModal() {
 
   document.getElementById('modal-product-name').innerText  = osName + ' ' + editionName;
   document.getElementById('modal-product-price').innerText = data.price;
-  document.getElementById('mp-card-btn').href = data.mpLink || '#';
+  document.getElementById('modal-email').value = '';
 
   document.getElementById('payment-modal').classList.remove('hidden');
+}
+
+function handleCardPayment() {
+  var emailInput = document.getElementById('modal-email');
+  if (!emailInput.checkValidity()) {
+    emailInput.reportValidity();
+    return;
+  }
+  var data = config[state.os + '-' + state.edition];
+  window.open(data.mpLink || '#', '_blank');
 }
 
 function closePaymentModal() {

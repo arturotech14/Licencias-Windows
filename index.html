@@ -357,10 +357,8 @@
       <p class="text-white/50 text-[11px] text-center">¿Cómo querés pagar?</p>
 
       <!-- Opción 1: Tarjeta -->
-      <a
+      <div
         id="mp-card-btn"
-        href="#"
-        target="_blank"
         class="block p-4 rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-600/20 to-blue-900/20 hover:from-blue-600/30 hover:border-blue-400/50 active:scale-[0.98] transition-all"
       >
         <div class="flex items-center gap-3 mb-3">
@@ -372,10 +370,27 @@
             <p class="text-white/40 text-[10px] mt-0.5">Visa, Mastercard, American Express</p>
           </div>
         </div>
-        <div class="bg-blue-500 text-white text-center text-sm font-bold py-3 rounded-xl">
+        <div class="space-y-2 mb-3">
+          <label class="text-[10px] font-bold uppercase tracking-widest text-blue-400 px-1 block">
+            Ingresa tu mail para que recibas la clave de tu licencia
+          </label>
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-lg pointer-events-none"
+              style='font-variation-settings: "FILL" 0;'>mail</span>
+            <input
+              id="modal-email"
+              type="email"
+              autocomplete="email"
+              required
+              placeholder="tu@email.com"
+              class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all"
+            />
+          </div>
+        </div>
+        <div onclick="handleCardPayment()" class="bg-blue-500 text-white text-center text-sm font-bold py-3 rounded-xl cursor-pointer hover:bg-blue-600 transition-colors">
           Pagar con Tarjeta →
         </div>
-      </a>
+      </div>
 
       <!-- Opción 2: WhatsApp -->
       <a
