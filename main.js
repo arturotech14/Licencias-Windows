@@ -117,14 +117,78 @@ function openPaymentModal() {
   document.getElementById('payment-modal').classList.remove('hidden');
 }
 
-function handleCardPayment() {
-  var emailInput = document.getElementById('modal-email');
-  if (!emailInput.checkValidity()) {
-    emailInput.reportValidity();
+async function handleCardPayment() {
+  const emailInput = document.getElementById('modal-email');
+  const statusEl   = document.getElementById('payment-status');
+  const honeypot   = document.getElementById('payment-website').value;
+
+  const setStatus = (text, kind) => {
+    const color = kind === 'error'   ? 'text-red-400'
+                : kind === 'success' ? 'text-green-400'
+                                     : 'text-white/60';
+    statusEl.className = `text-[11px] text-center min-h-[14px] ${color}`;
+    statusEl.textContent = text;
+  };
+  setStatus('');
+
+  const email = emailInput.value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    emailInput.focus();
+    setStatus('Ingresá un email válido para continuar.', 'error');
     return;
   }
-  var data = config[state.os + '-' + state.edition];
+  if (!paymentRateLimitOk()) {
+    setStatus('Esperá unos segundos antes de reintentar.', 'error');
+    return;
+  }
+
+  const data = config[state.os + '-' + state.edition];
+  const osName      = state.os      === 'win11' ? 'Windows 11' : 'Windows 10';
+  const editionName = state.edition === 'pro'   ? 'Pro'        : 'Home';
+  const product = osName + ' ' + editionName;
+
+  sendPaymentEmail(email, product, data.price, honeypot);
+
   window.open(data.mpLink || '#', '_blank');
+  closePaymentModal();
+}
+
+function paymentRateLimitOk() {
+  const now = Date.now();
+  const last = Number(localStorage.getItem('payment_last') || 0);
+  if (now - last < 15 * 1000) return false;
+  localStorage.setItem('payment_last', String(now));
+  return true;
+}
+
+async function sendPaymentEmail(email, product, price, honeypot) {
+  try {
+    let recaptchaToken = '';
+    try {
+      recaptchaToken = await getRecaptchaToken('payment');
+    } catch (_) {}
+
+    const ts = Date.now();
+    const sig = await hmacSha256Hex(
+      CONTACT_HMAC_KEY,
+      `${email}|${product}|${ts}`
+    );
+
+    await fetch(PAYMENT_ENDPOINT, {
+      method: 'POST',
+      mode: 'cors',
+      keepalive: true,
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        email, product, price, ts, sig,
+        website: honeypot || '',
+        recaptcha: recaptchaToken,
+        ua: navigator.userAgent.slice(0, 200)
+      })
+    });
+  } catch (_) {
+    // Silencioso — el pago no debe bloquearse si falla el registro
+  }
 }
 
 function closePaymentModal() {
@@ -139,6 +203,7 @@ function handleBackdropClick(event) {
 
 // ===== FORMULARIO DE CONTACTO =====
 const CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxuMQ_fwlGKrruVHnE8IxeA3Dk3bQRBAbBF3YTRv578voke1Ylc6DIdNeO4hthkjn7a/exec';
+const PAYMENT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwU-2ep6x4A6dY-DIMZbw9k-usjGxZlxo5_Pz9UImvT7LykUf2RsiJ7_WQCr0nqGqif/exec';
 const CONTACT_HMAC_KEY = 'a7f2c9e1b4d8f6h3k2m5n1p8q6r3s9t2u4v7w1x3y5z8a0b2c4d6e8f0g2h4i6';
 const RECAPTCHA_SITE_KEY = 'TU_RECAPTCHA_SITE_KEY';
 

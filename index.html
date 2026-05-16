@@ -387,6 +387,9 @@
           <label class="text-[10px] font-bold uppercase tracking-widest text-blue-400 px-1 block">
             Ingresa tu mail para que recibas la clave de tu licencia
           </label>
+          <!-- Honeypot anti-bot (oculto a humanos) -->
+          <input type="text" name="website" id="payment-website" tabindex="-1" autocomplete="off"
+            style="position:absolute;left:-9999px;opacity:0;height:0;width:0;" aria-hidden="true"/>
           <div class="relative">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/30 text-lg pointer-events-none"
               style='font-variation-settings: "FILL" 0;'>mail</span>
@@ -395,10 +398,12 @@
               type="email"
               autocomplete="email"
               required
+              maxlength="254"
               placeholder="tu@email.com"
               class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all"
             />
           </div>
+          <p id="payment-status" class="text-[11px] text-center min-h-[14px] text-white/60" aria-live="polite"></p>
         </div>
         <div onclick="handleCardPayment()" class="bg-blue-500 text-white text-center text-sm font-bold py-3 rounded-xl cursor-pointer hover:bg-blue-600 transition-colors">
           Pagar con Tarjeta →
