@@ -40,6 +40,25 @@ function quickSelect(os, edition) {
   scrollToSelector();
 }
 
+function getProductName() {
+  const osName      = state.os      === 'win11' ? 'Windows 11' : 'Windows 10';
+  const editionName = state.edition === 'pro'   ? 'Pro'        : 'Home';
+  return `${osName} ${editionName}`;
+}
+
+function buildWhatsAppUrl() {
+  const text = `Hola! quiero la licencia de ${getProductName()}`;
+  return `https://wa.me/541123865336?text=${encodeURIComponent(text)}`;
+}
+
+function refreshWhatsAppLinks() {
+  const url = buildWhatsAppUrl();
+  ['wa-float', 'wa-bottom', 'wa-modal'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.href = url;
+  });
+}
+
 function updateUI() {
   const data = config[`${state.os}-${state.edition}`];
   const infoContent = document.getElementById('info-content');
@@ -52,6 +71,8 @@ function updateUI() {
       `Comprar ${state.edition.charAt(0).toUpperCase() + state.edition.slice(1)}`;
     infoContent.style.opacity = '1';
   }, 100);
+
+  refreshWhatsAppLinks();
 
   const baseBtn = 'tab-button flex-1 flex items-center justify-center gap-2 py-2 md:py-3 rounded-xl font-bold text-sm';
 
@@ -107,12 +128,11 @@ window.onload = updateUI;
 
 function openPaymentModal() {
   var data = config[state.os + '-' + state.edition];
-  var osName      = state.os      === 'win11' ? 'Windows 11' : 'Windows 10';
-  var editionName = state.edition === 'pro'   ? 'Pro'        : 'Home';
 
-  document.getElementById('modal-product-name').innerText  = osName + ' ' + editionName;
+  document.getElementById('modal-product-name').innerText  = getProductName();
   document.getElementById('modal-product-price').innerText = data.price;
   document.getElementById('modal-email').value = '';
+  refreshWhatsAppLinks();
 
   document.getElementById('payment-modal').classList.remove('hidden');
 }
@@ -143,9 +163,7 @@ async function handleCardPayment() {
   }
 
   const data = config[state.os + '-' + state.edition];
-  const osName      = state.os      === 'win11' ? 'Windows 11' : 'Windows 10';
-  const editionName = state.edition === 'pro'   ? 'Pro'        : 'Home';
-  const product = osName + ' ' + editionName;
+  const product = getProductName();
 
   sendPaymentEmail(email, product, data.price, honeypot);
 

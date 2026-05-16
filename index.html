@@ -156,7 +156,7 @@
   </aside>
 
   <!-- Floating WhatsApp Button (mobile only) -->
-  <a class="whatsapp-float liquid-glass-highlight text-[#25D366] hover:text-white hover:bg-[#25D366] md:hidden flex" href="https://wa.me/541123865336?text=quiero%20la%20licencia%20windows" target="_blank">
+  <a id="wa-float" class="whatsapp-float liquid-glass-highlight text-[#25D366] hover:text-white hover:bg-[#25D366] md:hidden flex" href="https://wa.me/541123865336" target="_blank">
     <span class="material-symbols-outlined text-[32px]" style='font-variation-settings: "FILL" 1;'>chat</span>
   </a>
 
@@ -311,7 +311,7 @@
   <!-- Persistent Bottom Navigation -->
   <div class="fixed bottom-0 left-0 w-full z-50 px-4 pb-8 pt-4 bg-background/60 backdrop-blur-3xl border-t border-white/10">
     <div class="max-w-2xl mx-auto grid grid-cols-3 gap-3 md:gap-6">
-      <a class="flex flex-col items-center justify-center gap-1 py-3 md:py-4 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] transition-all hover:bg-[#25D366]/20" href="https://wa.me/541123865336?text=quiero%20la%20licencia%20windows" target="_blank">
+      <a id="wa-bottom" class="flex flex-col items-center justify-center gap-1 py-3 md:py-4 rounded-2xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] transition-all hover:bg-[#25D366]/20" href="https://wa.me/541123865336" target="_blank">
         <span class="material-symbols-outlined text-2xl" style='font-variation-settings: "FILL" 1;'>chat</span>
         <span class="text-[9px] md:text-[11px] font-bold uppercase tracking-wider">WhatsApp</span>
       </a>
@@ -412,7 +412,8 @@
 
       <!-- Opción 2: WhatsApp -->
       <a
-        href="https://wa.me/541123865336?text=quiero%20la%20licencia%20windows"
+        id="wa-modal"
+        href="https://wa.me/541123865336"
         target="_blank"
         class="block p-4 rounded-2xl border border-[#25D366]/30 bg-gradient-to-br from-[#25D366]/10 to-[#128C7E]/10 hover:from-[#25D366]/20 hover:border-[#25D366]/50 active:scale-[0.98] transition-all"
       >
