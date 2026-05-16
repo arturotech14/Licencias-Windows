@@ -105,6 +105,9 @@
     }
   </script>
   <link rel="stylesheet" href="styles.css"/>
+  <!-- reCAPTCHA v3 (reemplazá TU_SITE_KEY por la clave pública de tu sitio) -->
+  <script src="https://www.google.com/recaptcha/api.js?render=TU_RECAPTCHA_SITE_KEY"></script>
+  <style>.grecaptcha-badge { visibility: hidden !important; }</style>
 </head>
 <body class="font-body-md text-on-surface">
 
@@ -265,30 +268,40 @@
           <h3 class="text-lg sm:text-xl font-bold text-white">Contacto</h3>
           <p class="text-white/60 text-xs md:text-sm">¿Tienes dudas? Envíanos un mensaje.</p>
         </div>
-        <form class="space-y-4" onsubmit="event.preventDefault()">
+        <form id="contact-form" class="space-y-4" novalidate>
+          <!-- Honeypot anti-bot (oculto a humanos) -->
+          <input type="text" name="website" id="contact-website" tabindex="-1" autocomplete="off"
+            style="position:absolute;left:-9999px;opacity:0;height:0;width:0;" aria-hidden="true"/>
+
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-blue-400 px-1" for="contact-email">Email</label>
-            <input id="contact-email" name="email" type="email" autocomplete="email" required
+            <input id="contact-email" name="email" type="email" autocomplete="email" maxlength="254"
               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm md:text-base text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all"
               placeholder="tu@email.com"/>
           </div>
           <div class="space-y-2">
             <label class="text-[10px] font-bold uppercase tracking-widest text-blue-400 px-1" for="contact-phone">Teléfono</label>
-            <input id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel"
+            <input id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20"
               pattern="[0-9+\-\s()]{6,20}"
               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm md:text-base text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all"
               placeholder="+54 9 11 1234 5678"/>
           </div>
           <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-blue-400 px-1" for="contact-message">Mensaje</label>
-            <textarea id="contact-message" name="message" rows="3" required
+            <label class="text-[10px] font-bold uppercase tracking-widest text-blue-400 px-1" for="contact-message">Mensaje (opcional)</label>
+            <textarea id="contact-message" name="message" rows="3" maxlength="1000"
               class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm md:text-base text-white placeholder-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all resize-none"
               placeholder="Escribe tu mensaje aquí..."></textarea>
           </div>
-          <button type="submit"
-            class="w-full bg-primary py-3 md:py-3.5 rounded-xl font-bold text-white shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] text-sm md:text-base">
+          <p id="contact-status" class="text-xs text-center min-h-[16px] text-white/60" aria-live="polite"></p>
+          <button id="contact-submit" type="submit"
+            class="w-full bg-primary py-3 md:py-3.5 rounded-xl font-bold text-white shadow-lg shadow-primary/20 hover:bg-blue-600 transition-all active:scale-[0.98] text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed">
             Enviar Mensaje
           </button>
+          <p class="text-[10px] text-white/40 text-center leading-relaxed pt-1">
+            Este sitio está protegido por reCAPTCHA. Aplican la
+            <a href="https://policies.google.com/privacy" target="_blank" class="underline hover:text-white/60">Política de Privacidad</a> y
+            <a href="https://policies.google.com/terms" target="_blank" class="underline hover:text-white/60">Términos del Servicio</a> de Google.
+          </p>
         </form>
       </div>
     </section>

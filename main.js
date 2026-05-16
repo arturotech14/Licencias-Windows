@@ -136,3 +136,118 @@ function handleBackdropClick(event) {
     closePaymentModal();
   }
 }
+
+// ===== FORMULARIO DE CONTACTO =====
+const CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxuMQ_fwlGKrruVHnE8IxeA3Dk3bQRBAbBF3YTRv578voke1Ylc6DIdNeO4hthkjn7a/exec';
+const CONTACT_HMAC_KEY = 'a7f2c9e1b4d8f6h3k2m5n1p8q6r3s9t2u4v7w1x3y5z8a0b2c4d6e8f0g2h4i6';
+const RECAPTCHA_SITE_KEY = 'TU_RECAPTCHA_SITE_KEY';
+
+async function hmacSha256Hex(secret, message) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sigBuf = await crypto.subtle.sign('HMAC', key, enc.encode(message));
+  return Array.from(new Uint8Array(sigBuf))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function clientRateLimitOk() {
+  const now = Date.now();
+  const last = Number(localStorage.getItem('contact_last') || 0);
+  if (now - last < 15 * 1000) return false;
+  localStorage.setItem('contact_last', String(now));
+  return true;
+}
+
+function getRecaptchaToken(action) {
+  return new Promise((resolve, reject) => {
+    if (typeof grecaptcha === 'undefined' || !grecaptcha.ready) {
+      reject(new Error('recaptcha_not_loaded'));
+      return;
+    }
+    grecaptcha.ready(() => {
+      grecaptcha.execute(RECAPTCHA_SITE_KEY, { action })
+        .then(resolve)
+        .catch(reject);
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.getElementById('contact-form');
+  if (!form) return;
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+
+    const statusEl  = document.getElementById('contact-status');
+    const submitBtn = document.getElementById('contact-submit');
+    const email     = document.getElementById('contact-email').value.trim();
+    const phone     = document.getElementById('contact-phone').value.trim();
+    const message   = document.getElementById('contact-message').value.trim();
+    const honeypot  = document.getElementById('contact-website').value;
+
+    const setStatus = (text, kind) => {
+      const color = kind === 'error'   ? 'text-red-400'
+                  : kind === 'success' ? 'text-green-400'
+                                       : 'text-white/60';
+      statusEl.className = `text-xs text-center min-h-[16px] ${color}`;
+      statusEl.textContent = text;
+    };
+    setStatus('');
+
+    if (!email && !phone) {
+      setStatus('Completá email o teléfono para enviar.', 'error');
+      return;
+    }
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      setStatus('Email inválido.', 'error');
+      return;
+    }
+    if (phone && !/^[0-9+\-\s()]{6,20}$/.test(phone)) {
+      setStatus('Teléfono inválido.', 'error');
+      return;
+    }
+    if (!clientRateLimitOk()) {
+      setStatus('Esperá unos segundos antes de reenviar.', 'error');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    setStatus('Enviando...');
+
+    try {
+      const recaptchaToken = await getRecaptchaToken('contact');
+      const ts  = Date.now();
+      const sig = await hmacSha256Hex(
+        CONTACT_HMAC_KEY,
+        `${email}|${phone}|${message}|${ts}`
+      );
+
+      const res = await fetch(CONTACT_ENDPOINT, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          email, phone, message, ts, sig,
+          website: honeypot,
+          recaptcha: recaptchaToken,
+          ua: navigator.userAgent.slice(0, 200)
+        })
+      });
+      const data = await res.json();
+
+      if (data.ok) {
+        setStatus('¡Mensaje enviado! Te contactaremos pronto.', 'success');
+        form.reset();
+      } else {
+        throw new Error(data.error || 'unknown');
+      }
+    } catch (err) {
+      setStatus('No se pudo enviar. Probá de nuevo en un momento.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+});
