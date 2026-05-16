@@ -21,6 +21,8 @@ const SHEET_NAME = 'Contactos';                      // nombre de la pestaña
 const HMAC_SECRET = 'a7f2c9e1b4d8f6h3k2m5n1p8q6r3s9t2u4v7w1x3y5z8a0b2c4d6e8f0g2h4i6'; // mismo string que en main.js
 const RECAPTCHA_SECRET = 'TU_RECAPTCHA_SECRET_KEY';  // clave SECRETA de reCAPTCHA (NO la del sitio)
 const RECAPTCHA_MIN_SCORE = 0.5;                     // 0.0=bot, 1.0=humano
+// ⚠️ MODO PRUEBA: saltea reCAPTCHA y HMAC. Poner en false antes de publicar.
+const TEST_MODE = true;
 
 // Límites anti-abuso
 const MAX_EMAIL = 254;
@@ -48,12 +50,14 @@ function doPost(e) {
     }
 
     // 2) reCAPTCHA v3
-    if (!body.recaptcha) {
-      return output.setContent(JSON.stringify({ ok: false, error: 'no_recaptcha' }));
-    }
-    const recaptchaOk = verifyRecaptcha(body.recaptcha);
-    if (!recaptchaOk) {
-      return output.setContent(JSON.stringify({ ok: false, error: 'recaptcha_failed' }));
+    if (!TEST_MODE) {
+      if (!body.recaptcha) {
+        return output.setContent(JSON.stringify({ ok: false, error: 'no_recaptcha' }));
+      }
+      const recaptchaOk = verifyRecaptcha(body.recaptcha);
+      if (!recaptchaOk) {
+        return output.setContent(JSON.stringify({ ok: false, error: 'recaptcha_failed' }));
+      }
     }
 
     // 3) Anti-replay con timestamp (ventana 5 min)
@@ -63,11 +67,13 @@ function doPost(e) {
     }
 
     // 4) Validación HMAC
-    const payload = `${body.email || ''}|${body.phone || ''}|${body.message || ''}|${ts}`;
-    const expected = Utilities.computeHmacSha256Signature(payload, HMAC_SECRET)
-      .map(b => ('0' + (b & 0xff).toString(16)).slice(-2)).join('');
-    if (expected !== body.sig) {
-      return output.setContent(JSON.stringify({ ok: false, error: 'bad_signature' }));
+    if (!TEST_MODE) {
+      const payload = `${body.email || ''}|${body.phone || ''}|${body.message || ''}|${ts}`;
+      const expected = Utilities.computeHmacSha256Signature(payload, HMAC_SECRET)
+        .map(b => ('0' + (b & 0xff).toString(16)).slice(-2)).join('');
+      if (expected !== body.sig) {
+        return output.setContent(JSON.stringify({ ok: false, error: 'bad_signature' }));
+      }
     }
 
     // 5) Sanitización y validación de campos

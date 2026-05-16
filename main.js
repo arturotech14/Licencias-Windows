@@ -224,6 +224,8 @@ const CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxuMQ_fwlGKrru
 const PAYMENT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwU-2ep6x4A6dY-DIMZbw9k-usjGxZlxo5_Pz9UImvT7LykUf2RsiJ7_WQCr0nqGqif/exec';
 const CONTACT_HMAC_KEY = 'a7f2c9e1b4d8f6h3k2m5n1p8q6r3s9t2u4v7w1x3y5z8a0b2c4d6e8f0g2h4i6';
 const RECAPTCHA_SITE_KEY = 'TU_RECAPTCHA_SITE_KEY';
+// ⚠️ MODO PRUEBA: saltea reCAPTCHA en cliente. Poner en false antes de publicar.
+const TEST_MODE = true;
 
 async function hmacSha256Hex(secret, message) {
   const enc = new TextEncoder();
@@ -301,7 +303,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setStatus('Enviando...');
 
     try {
-      const recaptchaToken = await getRecaptchaToken('contact');
+      let recaptchaToken = 'test_mode';
+      if (!TEST_MODE) {
+        recaptchaToken = await getRecaptchaToken('contact');
+      }
       const ts  = Date.now();
       const sig = await hmacSha256Hex(
         CONTACT_HMAC_KEY,

@@ -21,11 +21,13 @@
  */
 
 // ===== CONFIGURACIÓN =====
-const SHEET_ID = 'PEGAR_AQUI_EL_ID_DE_LA_HOJA';      // de la URL: /spreadsheets/d/<ID>/edit
+const SHEET_ID = '1Hq8EpEc-3L2MyEM7KsrR46YmevZ9AAiX7OrFEgL4BlQ';      // misma hoja que contacto, pestaña 'Pagos'
 const SHEET_NAME = 'Pagos';                          // nombre de la pestaña (creala si no existe)
 const HMAC_SECRET = 'a7f2c9e1b4d8f6h3k2m5n1p8q6r3s9t2u4v7w1x3y5z8a0b2c4d6e8f0g2h4i6'; // mismo string que en main.js
 const RECAPTCHA_SECRET = 'TU_RECAPTCHA_SECRET_KEY';  // clave SECRETA de reCAPTCHA (NO la del sitio)
 const RECAPTCHA_MIN_SCORE = 0.5;                     // 0.0=bot, 1.0=humano
+// ⚠️ MODO PRUEBA: saltea CORS, reCAPTCHA y HMAC. Poner en false antes de publicar.
+const TEST_MODE = true;
 
 // Dominios autorizados (CORS). Agregá el dominio AWS donde alojes el sitio.
 const ALLOWED_ORIGINS = [
@@ -47,9 +49,11 @@ function doPost(e) {
 
   try {
     // Validar origen (CORS)
-    const origin = e.parameter.origin || (e.postData.parameters && e.postData.parameters.origin && e.postData.parameters.origin[0]);
-    if (origin && !ALLOWED_ORIGINS.some(d => origin.includes(d))) {
-      return output.setContent(JSON.stringify({ ok: false, error: 'forbidden' }));
+    if (!TEST_MODE) {
+      const origin = e.parameter.origin || (e.postData.parameters && e.postData.parameters.origin && e.postData.parameters.origin[0]);
+      if (origin && !ALLOWED_ORIGINS.some(d => origin.includes(d))) {
+        return output.setContent(JSON.stringify({ ok: false, error: 'forbidden' }));
+      }
     }
 
     const body = JSON.parse(e.postData.contents);
@@ -60,12 +64,14 @@ function doPost(e) {
     }
 
     // 2) reCAPTCHA v3
-    if (!body.recaptcha) {
-      return output.setContent(JSON.stringify({ ok: false, error: 'no_recaptcha' }));
-    }
-    const recaptchaOk = verifyRecaptcha(body.recaptcha);
-    if (!recaptchaOk) {
-      return output.setContent(JSON.stringify({ ok: false, error: 'recaptcha_failed' }));
+    if (!TEST_MODE) {
+      if (!body.recaptcha) {
+        return output.setContent(JSON.stringify({ ok: false, error: 'no_recaptcha' }));
+      }
+      const recaptchaOk = verifyRecaptcha(body.recaptcha);
+      if (!recaptchaOk) {
+        return output.setContent(JSON.stringify({ ok: false, error: 'recaptcha_failed' }));
+      }
     }
 
     // 3) Anti-replay con timestamp (ventana 5 min)
@@ -75,11 +81,13 @@ function doPost(e) {
     }
 
     // 4) Validación HMAC — la firma cubre email|product|ts
-    const payload = `${body.email || ''}|${body.product || ''}|${ts}`;
-    const expected = Utilities.computeHmacSha256Signature(payload, HMAC_SECRET)
-      .map(b => ('0' + (b & 0xff).toString(16)).slice(-2)).join('');
-    if (expected !== body.sig) {
-      return output.setContent(JSON.stringify({ ok: false, error: 'bad_signature' }));
+    if (!TEST_MODE) {
+      const payload = `${body.email || ''}|${body.product || ''}|${ts}`;
+      const expected = Utilities.computeHmacSha256Signature(payload, HMAC_SECRET)
+        .map(b => ('0' + (b & 0xff).toString(16)).slice(-2)).join('');
+      if (expected !== body.sig) {
+        return output.setContent(JSON.stringify({ ok: false, error: 'bad_signature' }));
+      }
     }
 
     // 5) Sanitización y validación de campos
