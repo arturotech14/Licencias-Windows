@@ -220,8 +220,8 @@ function handleBackdropClick(event) {
 }
 
 // ===== FORMULARIO DE CONTACTO =====
-const CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxuMQ_fwlGKrruVHnE8IxeA3Dk3bQRBAbBF3YTRv578voke1Ylc6DIdNeO4hthkjn7a/exec';
-const PAYMENT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwU-2ep6x4A6dY-DIMZbw9k-usjGxZlxo5_Pz9UImvT7LykUf2RsiJ7_WQCr0nqGqif/exec';
+const CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwwuSRYUY-eyJI8OxbEomADjiUTgZK9gLyODLhaoVRSpj1cu-iCSNHodAQicRppc84d/exec';
+const PAYMENT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwwuSRYUY-eyJI8OxbEomADjiUTgZK9gLyODLhaoVRSpj1cu-iCSNHodAQicRppc84d/exec';
 const CONTACT_HMAC_KEY = 'a7f2c9e1b4d8f6h3k2m5n1p8q6r3s9t2u4v7w1x3y5z8a0b2c4d6e8f0g2h4i6';
 const RECAPTCHA_SITE_KEY = 'TU_RECAPTCHA_SITE_KEY';
 // ⚠️ MODO PRUEBA: saltea reCAPTCHA en cliente. Poner en false antes de publicar.
