@@ -6,8 +6,8 @@ const config = {
     desc: 'Productividad avanzada y seguridad empresarial para Windows 11.',
     mpLink: "https://mpago.la/25AS9az"
   },
-  'win11-home': { 
-    price: 'USD 11.00', 
+  'win11-home': {
+    price: 'USD 11.00',
     desc: 'Perfecto para el uso diario y gaming en casa con Windows 11.',
     mpLink: "https://mpago.la/2LeqWts"
   },
@@ -125,6 +125,7 @@ function scrollToContact() {
 window.onload = updateUI;
 
 // ===== MODAL DE PAGO =====
+// El input de email es solo visual — no envía datos a ningún backend.
 
 function openPaymentModal() {
   var data = config[state.os + '-' + state.edition];
@@ -137,10 +138,9 @@ function openPaymentModal() {
   document.getElementById('payment-modal').classList.remove('hidden');
 }
 
-async function handleCardPayment() {
+function handleCardPayment() {
   const emailInput = document.getElementById('modal-email');
   const statusEl   = document.getElementById('payment-status');
-  const honeypot   = document.getElementById('payment-website').value;
 
   const setStatus = (text, kind) => {
     const color = kind === 'error'   ? 'text-red-400'
@@ -157,56 +157,10 @@ async function handleCardPayment() {
     setStatus('Ingresá un email válido para continuar.', 'error');
     return;
   }
-  if (!paymentRateLimitOk()) {
-    setStatus('Esperá unos segundos antes de reintentar.', 'error');
-    return;
-  }
 
   const data = config[state.os + '-' + state.edition];
-  const product = getProductName();
-
-  sendPaymentEmail(email, product, data.price, honeypot);
-
   window.open(data.mpLink || '#', '_blank');
   closePaymentModal();
-}
-
-function paymentRateLimitOk() {
-  const now = Date.now();
-  const last = Number(localStorage.getItem('payment_last') || 0);
-  if (now - last < 15 * 1000) return false;
-  localStorage.setItem('payment_last', String(now));
-  return true;
-}
-
-async function sendPaymentEmail(email, product, price, honeypot) {
-  try {
-    let recaptchaToken = '';
-    try {
-      recaptchaToken = await getRecaptchaToken('payment');
-    } catch (_) {}
-
-    const ts = Date.now();
-    const sig = await hmacSha256Hex(
-      CONTACT_HMAC_KEY,
-      `${email}|${product}|${ts}`
-    );
-
-    await fetch(PAYMENT_ENDPOINT, {
-      method: 'POST',
-      mode: 'cors',
-      keepalive: true,
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({
-        email, product, price, ts, sig,
-        website: honeypot || '',
-        recaptcha: recaptchaToken,
-        ua: navigator.userAgent.slice(0, 200)
-      })
-    });
-  } catch (_) {
-    // Silencioso — el pago no debe bloquearse si falla el registro
-  }
 }
 
 function closePaymentModal() {
@@ -221,21 +175,6 @@ function handleBackdropClick(event) {
 
 // ===== FORMULARIO DE CONTACTO =====
 const CONTACT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwwuSRYUY-eyJI8OxbEomADjiUTgZK9gLyODLhaoVRSpj1cu-iCSNHodAQicRppc84d/exec';
-const PAYMENT_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwwuSRYUY-eyJI8OxbEomADjiUTgZK9gLyODLhaoVRSpj1cu-iCSNHodAQicRppc84d/exec';
-const CONTACT_HMAC_KEY = 'a7f2c9e1b4d8f6h3k2m5n1p8q6r3s9t2u4v7w1x3y5z8a0b2c4d6e8f0g2h4i6';
-const RECAPTCHA_SITE_KEY = 'TU_RECAPTCHA_SITE_KEY';
-// ⚠️ MODO PRUEBA: saltea reCAPTCHA en cliente. Poner en false antes de publicar.
-const TEST_MODE = true;
-
-async function hmacSha256Hex(secret, message) {
-  const enc = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    'raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
-  );
-  const sigBuf = await crypto.subtle.sign('HMAC', key, enc.encode(message));
-  return Array.from(new Uint8Array(sigBuf))
-    .map(b => b.toString(16).padStart(2, '0')).join('');
-}
 
 function clientRateLimitOk() {
   const now = Date.now();
@@ -243,20 +182,6 @@ function clientRateLimitOk() {
   if (now - last < 15 * 1000) return false;
   localStorage.setItem('contact_last', String(now));
   return true;
-}
-
-function getRecaptchaToken(action) {
-  return new Promise((resolve, reject) => {
-    if (typeof grecaptcha === 'undefined' || !grecaptcha.ready) {
-      reject(new Error('recaptcha_not_loaded'));
-      return;
-    }
-    grecaptcha.ready(() => {
-      grecaptcha.execute(RECAPTCHA_SITE_KEY, { action })
-        .then(resolve)
-        .catch(reject);
-    });
-  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -303,24 +228,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setStatus('Enviando...');
 
     try {
-      let recaptchaToken = 'test_mode';
-      if (!TEST_MODE) {
-        recaptchaToken = await getRecaptchaToken('contact');
-      }
-      const ts  = Date.now();
-      const sig = await hmacSha256Hex(
-        CONTACT_HMAC_KEY,
-        `${email}|${phone}|${message}|${ts}`
-      );
-
       const res = await fetch(CONTACT_ENDPOINT, {
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
-          email, phone, message, ts, sig,
+          email, phone, message,
+          ts: Date.now(),
           website: honeypot,
-          recaptcha: recaptchaToken,
           ua: navigator.userAgent.slice(0, 200)
         })
       });
